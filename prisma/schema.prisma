@@ -16,4 +16,10 @@ model User{
   password String
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt
+  profile Profile
+}
+
+type Profile{
+  firstName String
+  lastName String
 }
