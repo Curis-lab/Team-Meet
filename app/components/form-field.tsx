@@ -17,7 +17,6 @@ export function Formfield({
     onChange=()=>{},
     error=""
 }:FormfieldProps){
-
     const [errorText, setErrorText] = useState(error);
     return<>
     <label className="text-blue-600 font-semibold">{label}</label>

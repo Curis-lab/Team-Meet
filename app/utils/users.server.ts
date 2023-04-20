@@ -1,10 +1,13 @@
-import {prisma} from './prisma.server';
+import {db} from './prisma.server';
 import { Registerform } from './types.server';
 import bcrypt from 'bcryptjs';
 
 export const createUser = async(user: Registerform)=>{
     const passwordHash = await bcrypt.hash(user.password, 10);
-    const newUser = await prisma.user.create({
+
+    //prisma will sent to mongodb pattern
+    const newUser = await db.user.create({
+        //this is new data pattern
         data:{
             email:user.email,
             password: passwordHash,
@@ -14,5 +17,6 @@ export const createUser = async(user: Registerform)=>{
             }
         }
     });
+
     return {id: newUser.id, email: user.email}
 };
