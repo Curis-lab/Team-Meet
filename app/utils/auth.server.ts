@@ -11,7 +11,7 @@ const secrets = process.env.SESSION_SECRET;
 if(!secrets){
     throw new Error("SESSION_SECRET is not set");
 }
-
+//cooking settings
 const storage = createCookieSessionStorage({
     cookie:{
         name:"team-session",
@@ -44,7 +44,7 @@ export const register = async(form: Registerform)=>{
                 status: 400
             })
     }
-    return json({error:`Registration`},{status: 400});
+    return createUserSession(newUser.id, '/');
 }
 
 export const login = async (form: loginForm)=>{
@@ -58,9 +58,10 @@ export const login = async (form: loginForm)=>{
    
     if(!user){
         return json({error: `Incorrect login`},{ status: 400})
-    }else{
-    return json({error: `login form for valild item`},{status: 400});
     }
+
+    return createUserSession(user.id, '/');
+    
 } 
 
 export const createUserSession = async(
