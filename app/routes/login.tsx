@@ -1,5 +1,5 @@
 import { ActionFunction, json } from "@remix-run/node";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Formfield } from "~/components/form-field";
 import {Layout} from "~/components/layout";
 import { login, register } from "~/utils/auth.server";
@@ -34,20 +34,21 @@ export const action: ActionFunction = async({request})=>{
         return json({error: `invalid Form Data`, form: action},{status: 400});
     }
 
-    // const errors = {
-    //     email: validateEmail(email),
-    //     password: validatePassword(password),
-    //     ...(action === 'register'? 
-    //     { 
-    //         firstName: validateName(firstName as string || ''),
-    //         lastName: validateName(lastName as string || '')
-    //     }:{})
-    // }
+    const errors = {
+        email: validateEmail(email),
+        password: validatePassword(password),
+        ...(action === 'Sign In'? 
+        { 
+            firstName: validateName(firstName as string || ''),
+            lastName: validateName(lastName as string || '')
+        }:{})
+    }
 
-    // if(Object.values(errors).some(Boolean))
-    //     return json({errors, fields: {email, password, firstName, lastName}, form: action},{status: 400})
 
-    console.log(typeof email);
+    //09687914553 sa hai
+    if(Object.values(errors).some(Boolean))
+        return json({errors, fields: {email, password, firstName, lastName}, form: action},{status: 400})
+
     switch(action){
 
         case 'Sign In':
@@ -69,12 +70,15 @@ export default function Login() {
     const actionData = useActionData();
 
     const[ formError, setFormError] = useState(actionData?.error || '');
-    const [action, setAction] = useState('signup');
+    const[ errors , setErrors] = useState(actionData?.errors || {});
+    const firstLoad = useRef(true);
+    const [action, setAction] = useState('login');
+    
     const [formData, setFormData] = useState({
         email:'',
         password:'',
         firstName:'',
-        secondName:''
+        lastName:''
     })
 
     const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>, field:string)=>{
@@ -86,10 +90,32 @@ export default function Login() {
         }))
     }
 
+
+    //when action does something
+    useEffect(()=>{
+        if(!firstLoad.current){
+            const newState = {
+                email: '',
+                password:'',
+                firstName:'',
+                lastName:''
+            }
+            setErrors(newState);
+            setFormError('');
+            setFormData(newState);
+        }
+    },[action]);
+
+    useEffect(()=>{
+        if(!firstLoad.current){
+            setFormError('')
+        }
+    },[formData]);
+
     return (
         <Layout>
             <div className="h-full flex justify-center items-center flex-col gap-y-4">
-                <button onClick={e=>setAction(action==='login'? 'signup':'login')} className="absolute top-0 right-0 bg-yellow-300 rounded-md font-semibold text-blue-600 px-3 py-2 hover:bg-yellow-500 hover:translate-y-1">Sign Up</button>
+                <button onClick={e=>setAction(action==='login'? 'signup':'login')} className="absolute top-0 right-0 bg-yellow-300 rounded-md font-semibold text-blue-600 px-3 py-2 hover:bg-yellow-500 hover:translate-y-1">{action === 'login'?'Sign Out':'Sign In'}</button>
                 <h2 className="text-5xl font-extrabold">Welcome to Teams</h2>
                 <p className="font-semibold text-slate-300">Log In to Give Some Paraise!</p>
                 <form method="post" className="rounded-2xl bg-gray-200 p-6 w-96">
@@ -101,15 +127,15 @@ export default function Login() {
                         label = 'email'
                         type="text"
                         value={formData.email}
-                        error=""
+                        error={errors.email}
                         onChange={e=>handleInputChange(e, 'email')}
                     />
                     <Formfield
-                        htmlFor = 'password'
-                        label = 'password'
+                        htmlFor ='password'
+                        label ='password'
                         type="password"
                         value={formData.password}
-                        error=""
+                        error={errors.password}
                         onChange={e=>handleInputChange(e,'password')}
                     />
                     {
@@ -120,15 +146,15 @@ export default function Login() {
                             label = 'First Name'
                             type="text"
                             value={formData.firstName}
-                            error=""
+                            error={errors?.firstName}
                             onChange={e=>handleInputChange(e,'firstName')}/>  
                             <Formfield
                             htmlFor = 'lastName'
                             label = 'Last Name'
                             type="text"
-                            value={formData.secondName}
-                            error=""
-                            onChange={e=>handleInputChange(e,'secondName')}/>  
+                            value={formData.lastName}
+                            error={errors?.lastName}
+                            onChange={e=>handleInputChange(e,'lastName')}/>  
                         </>: null
                     }
                     <div className="w-full text-center">

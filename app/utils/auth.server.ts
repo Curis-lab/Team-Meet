@@ -5,6 +5,7 @@ import type { Registerform, loginForm } from "./types.server"
 import { createUser } from "./users.server"
 import bcrypt from 'bcryptjs';
 import { Prisma } from "@prisma/client";
+import { useSyncExternalStore } from "react";
 
 const secrets = process.env.SESSION_SECRET;
 
@@ -77,3 +78,18 @@ export const createUserSession = async(
     })
 }
 
+export async function requireUserId(
+    request: Request,
+    redirectTo: string = new URL(request.url).pathname
+){
+    const session = await getUserSession(request);
+    const userId = session.get("userId");
+    if(!userId || typeof userId !== "string"){
+        const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
+        throw redirect(`/`);
+    }
+}
+
+function getUserSession(request: Request){
+    return storage.getSession(request.headers.get("Cookie")); 
+}

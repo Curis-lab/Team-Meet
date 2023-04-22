@@ -17,6 +17,18 @@ export const createUser = async(user: Registerform)=>{
             }
         }
     });
-
     return {id: newUser.id, email: user.email}
 };
+
+export const getOtherUsers = async( userId: string)=>{
+    return await db.user.findMany({
+        where:{
+            id:{not:userId},
+        },
+        orderBy:{
+            profile:{
+                firstName: "asc"
+            }
+        }
+    })
+}
