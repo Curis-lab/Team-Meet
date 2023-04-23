@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Formfield } from "~/components/form-field";
 import {Layout} from "~/components/layout";
-import { ActionFunction } from "remix";
-
+import { ActionFunction, json } from "@remix-run/node";
+import { register } from "~/utils/auth.server";
 
 export const action: ActionFunction = async({request})=>{
     
@@ -14,50 +14,15 @@ export const action: ActionFunction = async({request})=>{
     let firstName = form.get("firstName");
     let lastName = form.get("lastName");
 
-    // if( 
-    //     typeof action !== "string" ||
-    //     typeof email !== "string" ||
-    //     typeof password !== "string"
-    // ){
-    //     return json({error:`Invalid Form Data`, form: action},{status:400});
-    // }
-
-    // if(
-    //     action === 'register' && (
-    //         typeof firstName !== "string"||
-    //         typeof lastName !== "string"
-    //     )
-    // ){
-    //     return json({error: `invalid Form Data`, form: action},{status: 400});
-    // }
-
-    // const errors = {
-    //     email: validateEmail(email),
-    //     password: validatePassword(password),
-    //     ...(action === 'signup'? 
-    //     { 
-    //         firstName: validateName(firstName as string || ''),
-    //         lastName: validateName(lastName as string || '')
-    //     }:{})
-    // }
- 
-    // //IF SOMETING FOUND ERROR
-    // if(Object.values(errors).some(Boolean))
-    //     return json({errors, fields: {email, password, firstName, lastName}, form: action},{status: 400})
-
-    // switch(action){
-
-    //     case 'login':
-    //         return await login({email, password})
-        
-    //     case 'signup':
-    //         firstName = firstName as string;
-    //         lastName = lastName as string;
-    //         return register({email, password, firstName, lastName})
-        
-    //     default:
-    //         return json({error:action},{status: 400})
-    //     }
+    switch(action){
+        case 'signup':
+            console.log(action);
+            console.log(typeof email);
+            register({email, password, firstName, lastName});
+            return null;
+        default:
+            return json({error:`Invalid value`},{status: 400});
+    }
 }
 export default function Login() {
     const [action, setAction] = useState('signup');
@@ -121,6 +86,7 @@ export default function Login() {
                     <div className="w-full text-center">
                         <button
                         type="submit"
+                        name="_action"
                         className="rounded-xl bg-yellow-300 px-3 py-2 text-blue-600 font-semibold transition duration-150"
                         value={action}
                         >{action === 'login'? "Sign In":"Sign Up"}</button>
