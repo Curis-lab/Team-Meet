@@ -1,7 +1,64 @@
 import { useState } from "react";
 import { Formfield } from "~/components/form-field";
 import {Layout} from "~/components/layout";
+import { ActionFunction } from "remix";
 
+
+export const action: ActionFunction = async({request})=>{
+    
+    const form = await request.formData()
+
+    const action = form.get("_action");
+    const email = form.get("email");
+    const password = form.get("password");
+    let firstName = form.get("firstName");
+    let lastName = form.get("lastName");
+
+    // if( 
+    //     typeof action !== "string" ||
+    //     typeof email !== "string" ||
+    //     typeof password !== "string"
+    // ){
+    //     return json({error:`Invalid Form Data`, form: action},{status:400});
+    // }
+
+    // if(
+    //     action === 'register' && (
+    //         typeof firstName !== "string"||
+    //         typeof lastName !== "string"
+    //     )
+    // ){
+    //     return json({error: `invalid Form Data`, form: action},{status: 400});
+    // }
+
+    // const errors = {
+    //     email: validateEmail(email),
+    //     password: validatePassword(password),
+    //     ...(action === 'signup'? 
+    //     { 
+    //         firstName: validateName(firstName as string || ''),
+    //         lastName: validateName(lastName as string || '')
+    //     }:{})
+    // }
+ 
+    // //IF SOMETING FOUND ERROR
+    // if(Object.values(errors).some(Boolean))
+    //     return json({errors, fields: {email, password, firstName, lastName}, form: action},{status: 400})
+
+    // switch(action){
+
+    //     case 'login':
+    //         return await login({email, password})
+        
+    //     case 'signup':
+    //         firstName = firstName as string;
+    //         lastName = lastName as string;
+    //         return register({email, password, firstName, lastName})
+        
+    //     default:
+    //         return json({error:action},{status: 400})
+    //     }
+}
 export default function Login() {
     const [action, setAction] = useState('signup');
     const [formData, setFormData] = useState({
@@ -25,7 +82,7 @@ export default function Login() {
                 <button onClick={e=>setAction(action==='login'? 'signup':'login')} className="absolute top-0 right-0 bg-yellow-300 font-semibold text-blue-600 px-3 py-2 hover:bg-yellow-500 hover:translate-y-1">Sign Up</button>
                 <h2 className="text-5xl font-extrabold">Welcome to Teams</h2>
                 <p className="font-semibold text-slate-300">{action==='login'?'Log In to Give Some Paraise!':'Sing up to give some paraise'}</p>
-                <form className="rounded-2xl bg-gray-200 p-6 w-96">
+                <form method="post" className="rounded-2xl bg-gray-200 p-6 w-96">
                     <Formfield
                         htmlFor = 'email'
                         label = 'email'
