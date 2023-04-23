@@ -2,8 +2,6 @@ import { useState } from "react";
 import { Formfield } from "~/components/form-field";
 import {Layout} from "~/components/layout";
 
-
-
 export default function Login() {
     const [action, setAction] = useState('signup');
     const [formData, setFormData] = useState({
@@ -26,7 +24,7 @@ export default function Login() {
             <div className="h-full flex justify-center items-center flex-col gap-y-4">
                 <button onClick={e=>setAction(action==='login'? 'signup':'login')} className="absolute top-0 right-0 bg-yellow-300 font-semibold text-blue-600 px-3 py-2 hover:bg-yellow-500 hover:translate-y-1">Sign Up</button>
                 <h2 className="text-5xl font-extrabold">Welcome to Teams</h2>
-                <p className="font-semibold text-slate-300">Log In to Give Some Paraise!</p>
+                <p className="font-semibold text-slate-300">{action==='login'?'Log In to Give Some Paraise!':'Sing up to give some paraise'}</p>
                 <form className="rounded-2xl bg-gray-200 p-6 w-96">
                     <Formfield
                         htmlFor = 'email'
@@ -64,11 +62,11 @@ export default function Login() {
                         </>: null
                     }
                     <div className="w-full text-center">
-                        <input
+                        <button
                         type="submit"
                         className="rounded-xl bg-yellow-300 px-3 py-2 text-blue-600 font-semibold transition duration-150"
-                        value={action === 'login'?"Sign In":"Sign Up"}
-                        />
+                        value={action}
+                        >{action === 'login'? "Sign In":"Sign Up"}</button>
                     </div>
                 </form>
             </div>
