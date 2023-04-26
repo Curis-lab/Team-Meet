@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Formfield } from "~/components/form-field";
 import {Layout} from "~/components/layout";
 import { ActionFunction, json } from "@remix-run/node";
-import { register } from "~/utils/auth.server";
+import { login, register } from "~/utils/auth.server";
+import { useActionData } from "@remix-run/react";
 
 export const action: ActionFunction = async({request})=>{
     
@@ -14,18 +15,41 @@ export const action: ActionFunction = async({request})=>{
     let firstName = form.get("firstName");
     let lastName = form.get("lastName");
 
+
+    //prevent form null
+    if(
+        typeof action !== 'string' ||
+        typeof email !== 'string' ||
+        typeof password !== 'string'
+    ){
+        return json({error:`Invalid form at first Data`, form: action},{status:400});
+    }
+    
+    console.log(typeof firstName);
+    if(action === 'register' && (
+        typeof firstName !== 'string' ||
+        typeof lastName !== 'string'
+        )){
+        return json({error:`Invalid form sdfaewefsdf Data`, form: action},{status:400});
+        
+    }
     switch(action){
+        case 'login':
+            console.log(action);
+            return login({email, password})
         case 'signup':
             console.log(action);
-            console.log(typeof email);
-            register({email, password, firstName, lastName});
-            return null;
+            firstName = firstName as string;
+            lastName = lastName as string;
+            return register({email, password, firstName, lastName});
         default:
             return json({error:`Invalid value`},{status: 400});
     }
 }
 export default function Login() {
-    const [action, setAction] = useState('signup');
+    const actionData = useActionData();
+    const [formError, setFormError] = useState(actionData?.error || '');
+    const [action, setAction] = useState('login');
     const [formData, setFormData] = useState({
         email:'',
         password:'',
@@ -48,6 +72,7 @@ export default function Login() {
                 <h2 className="text-5xl font-extrabold">Welcome to Teams</h2>
                 <p className="font-semibold text-slate-300">{action==='login'?'Log In to Give Some Paraise!':'Sing up to give some paraise'}</p>
                 <form method="post" className="rounded-2xl bg-gray-200 p-6 w-96">
+                    {formError}
                     <Formfield
                         htmlFor = 'email'
                         label = 'email'

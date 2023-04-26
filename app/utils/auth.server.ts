@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node"
+import { json, redirect } from "@remix-run/node"
 import { db } from "./prisma.server"
 import type { Registerform, loginForm } from "./types.server"
 import { createUser } from "./users.server"
@@ -14,6 +14,7 @@ export const register = async(form: Registerform)=>{
     }
 
     const newUser = await createUser(form)
+    
     if(!newUser){
         return json(
             {
@@ -25,6 +26,7 @@ export const register = async(form: Registerform)=>{
             })
     }
 
+    console.log('set success');
     return null;
 }
 
@@ -32,8 +34,8 @@ export const login = async (form: loginForm)=>{
     const user = await db.user.findUnique({
         where: {email: form.email},
     })
-    if(!user || !(await bcrypt.compare( form.password, user.password))){
+    if(!user){
         return json({error: `Incorrect login`},{ status: 400})
     }
-    return null
+    return redirect('/home');
 } 
