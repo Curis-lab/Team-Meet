@@ -17,9 +17,48 @@ model User{
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt
   profile Profile
+  authoredTeams Team[] @relation("AuthoredTeams")
+  teams         Team[] @relation("RecievedTeams")
+}
+
+model Team{
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  createAt  DateTime    @default(now())
+  style     TeamStyle?
+  authoer User @relation(references: [id], fields: [authorId],"AuthoredTeams")
+  authorId String @db.ObjectId
+  recipient User @relation(references: [id], fields: [recipientId], "RecievedTeams")
+  recipientId String @db.ObjectId
+}
+
+type TeamStyle{
+  backgroundColor Color @default(YELLOW)
+  textColor       Color @default(WHITE)
+  emoji           Emoji @default(THUMBSUP)
 }
 
 type Profile{
   firstName String
   lastName String
+}
+
+enum Emoji{
+  THUMBSUP
+  PARTY
+  HANDSUP
+}
+
+enum Department{
+  MARKETING
+  SALES
+  ENGINEERING
+  HR
+}
+
+enum Color{
+  RED
+  GREEN
+  YELLOW
+  BLUE
+  WHITE
 }

@@ -29,3 +29,9 @@ export const getOtherUser = async()=>{
         }
     })
 }
+
+export const getUserId = async(userId: string)=>{
+    return await db.user.findUnique({
+        where:{id: userId},
+    });
+}
