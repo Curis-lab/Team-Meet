@@ -1,6 +1,7 @@
 export const colorMap ={
     RED:'text-red-400',
-    GREEN:'text-green-400'
+    GREEN:'text-green-400',
+    BlUE:'text-blue-400'
 }
 
 export const backgroundColorMap = {
