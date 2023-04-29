@@ -1,10 +1,28 @@
-import { json, redirect } from "@remix-run/node"
+import { createCookieSessionStorage, json, redirect } from "@remix-run/node"
 import { db } from "./prisma.server"
 import type { Registerform, loginForm } from "./types.server"
 import { createUser } from "./users.server"
-import bcrypt from 'bcryptjs';
+
+const secret = process.env.SESSION_SECRET;
+
+if(!secret){
+    throw new Error("SESSION_SECRET is not set");
+}
+
+const storage = createCookieSessionStorage({
+    cookie:{
+        name: "kudos-session",
+        secure: process.env.NODE_ENV === "production",
+        secrets: [secret],
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60*60*60*24*30,
+        httpOnly: true
+    },
+});
 
 export const register = async(form: Registerform)=>{
+
     const exist = await db.user.count({where:{email: form.email}})
     if(exist){
         return json(
@@ -13,6 +31,7 @@ export const register = async(form: Registerform)=>{
         )
     }
 
+    //return {id, email}
     const newUser = await createUser(form)
     
     if(!newUser){
@@ -26,7 +45,7 @@ export const register = async(form: Registerform)=>{
             })
     }
 
-    console.log('set success');
+    //impliment for cookies
     return null;
 }
 

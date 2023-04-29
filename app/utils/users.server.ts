@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs';
 export const createUser = async(user: Registerform)=>{
     const passwordHash = await bcrypt.hash(user.password, 10);
     const newUser = await db.user.create({
-        data:{
+        data:{  
             email:user.email,
             password: passwordHash,
             profile:{
@@ -14,6 +14,7 @@ export const createUser = async(user: Registerform)=>{
             }
         }
     });
+    
     return {id: newUser.id, email: user.email}
 };
 

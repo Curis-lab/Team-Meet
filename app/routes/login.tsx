@@ -34,18 +34,22 @@ export const action: ActionFunction = async({request})=>{
         
     }
     switch(action){
+        
         case 'login':
             console.log(action);
             return login({email, password})
+ 
         case 'signup':
             console.log(action);
             firstName = firstName as string;
             lastName = lastName as string;
             return register({email, password, firstName, lastName});
+        
         default:
             return json({error:`Invalid value`},{status: 400});
     }
 }
+
 export default function Login() {
     const actionData = useActionData();
     const [formError, setFormError] = useState(actionData?.error || '');
@@ -93,14 +97,14 @@ export default function Login() {
                         action ==='signup'?
                         <>
                             <Formfield
-                            htmlFor = 'first name'
+                            htmlFor = 'firstName'
                             label = 'First Name'
                             type="text"
                             value={formData.firstName}
                             error=""
                             onChange={e=>handleInputChange(e,'firstName')}/>  
                             <Formfield
-                            htmlFor = 'second name'
+                            htmlFor = 'lastName'
                             label = 'Second Name'
                             type="text"
                             value={formData.secondName}
