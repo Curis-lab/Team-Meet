@@ -40,7 +40,6 @@ export const action: ActionFunction = async({request})=>{
             return login({email, password})
  
         case 'signup':
-            console.log(action);
             firstName = firstName as string;
             lastName = lastName as string;
             return register({email, password, firstName, lastName});

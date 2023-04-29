@@ -11,8 +11,8 @@ if(!secret){
 
 const storage = createCookieSessionStorage({
     cookie:{
-        name: "kudos-session",
-        secure: process.env.NODE_ENV === "production",
+        name: "team-session",
+        secure: process.env.NODE_ENV === 'production',
         secrets: [secret],
         sameSite: "lax",
         path: "/",
@@ -45,8 +45,7 @@ export const register = async(form: Registerform)=>{
             })
     }
 
-    //impliment for cookies
-    return null;
+    return createUserSession(newUser.id,'/home');
 }
 
 export const login = async (form: loginForm)=>{
@@ -56,5 +55,19 @@ export const login = async (form: loginForm)=>{
     if(!user){
         return json({error: `Incorrect login`},{ status: 400})
     }
-    return redirect('/home');
+    // return redirect('/home');
+    return createUserSession(user.id, '/home');
 } 
+
+export const createUserSession = async(
+userId: string,
+redirectTo: string
+)=>{
+    const session = await  storage.getSession();
+    session.set('userId', userId);
+    return redirect(redirectTo,{
+        headers:{
+            "Set-Cookie": await storage.commitSession(session),
+        },
+    });
+};
