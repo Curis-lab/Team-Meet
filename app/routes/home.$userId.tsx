@@ -1,7 +1,7 @@
 import { TeamStyle } from "@prisma/client";
 import { LoaderFunction, json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { useState } from "react";
+import React, { useState } from "react";
 import Modal from "~/components/modal";
 import { Selectbox } from "~/components/select-box";
 import Team_previews from "~/components/team";
@@ -28,9 +28,22 @@ export default function Team(){
             textColor: 'WHITE',
             emoji:'THUMBSUP'        
         } as TeamStyle
-    })
+    });
+
     const {recipient, user} = useLoaderData();
 
+    const handleChange =( e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string)=>{
+        setFormData(form =>({...form, [field]: e.target.value}))
+    }
+
+    const handleStyleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string)=>{
+        setFormData(form=>({
+            ...form, style:{
+                ...form.style,
+                [field]: e.target.value
+            }
+        }))
+    }
     const getOptions = (data: any) =>Object.keys(data).reduce((acc: any[], curr)=>{
         acc.push({
             name: curr.charAt(0).toUpperCase()+ curr.slice(1).toLowerCase(),
@@ -59,16 +72,18 @@ export default function Team(){
                     name="massage"
                     className="w-full rounded-xl h-40 p-4"
                     placeholder={`Say something nice about`}
+                    value={formData.message}
+                    onChange={e=>handleChange(e, "message")}
                     />
                     <div className="flex flex-col items-center md:flex-row md:justify-start gap-x-4">
                         <Selectbox
                         options={backgroundColor}
                         name="backgroundColor"
-                        value={formData.style.textColor}
+                        value={formData.style.backgroundColor}
                         label="Background Color"
                         containerClassName="w-36"
                         className="w-full rounded-xl px-3 py-2 text-gray-400"
-                        onChange={e=>{}}
+                        onChange={e=>handleStyleChange(e,"backgroundColor")}
                         />
                         <Selectbox
                         options={text_colors}
@@ -77,7 +92,7 @@ export default function Team(){
                         label="Text Color"
                         containerClassName="w-36"
                         className="w-full rounded-xl px-3 py-2 text-gray-400"
-                        onChange={e=>{}}
+                        onChange={e=>handleStyleChange(e,"textColor")}
                         />
                         <Selectbox
                         options={emojis}
@@ -86,7 +101,7 @@ export default function Team(){
                         label="Emoji"
                         containerClassName="w-36"
                         className="w-full rounded-xl px-3 py-2 text-gray-400"
-                        onChange={e=>{}}
+                        onChange={e=>handleStyleChange(e,"emoji")}
                         />
                     </div>
                 </div>

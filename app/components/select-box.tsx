@@ -30,7 +30,8 @@ export function Selectbox({
             className={`${className} appearance-none`}
             id={id}
             name={name}
-            value={value || ''}>
+            value={value || ''}
+            onChange={onChange}>
                 {
                     options.map(option=>(
                         <option key={option.name} value={option.value}>
