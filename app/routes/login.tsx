@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { Formfield } from "~/components/form-field";
 import {Layout} from "~/components/layout";
-import { ActionFunction, json } from "@remix-run/node";
-import { login, register } from "~/utils/auth.server";
+import { ActionFunction, LoaderFunction, json, redirect } from "@remix-run/node";
+import { getUser, login, register } from "~/utils/auth.server";
 import { useActionData } from "@remix-run/react";
+
+export const loader: LoaderFunction = async({request}) =>{
+    return await getUser(request)? redirect('/') : null
+}
 
 export const action: ActionFunction = async({request})=>{
     
@@ -25,7 +29,6 @@ export const action: ActionFunction = async({request})=>{
         return json({error:`Invalid form at first Data`, form: action},{status:400});
     }
     
-    console.log(typeof firstName);
     if(action === 'register' && (
         typeof firstName !== 'string' ||
         typeof lastName !== 'string'

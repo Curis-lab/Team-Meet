@@ -1,6 +1,7 @@
 import { LoaderFunction, json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import Modal from "~/components/modal";
+import Team_previews from "~/components/team";
 import { UserCircle } from "~/components/user-circle";
 import { getUserId } from "~/utils/users.server";
 
@@ -9,6 +10,7 @@ export const loader: LoaderFunction =async ({params}) => {
     if(typeof userId !== 'string'){
         return redirect('/home')
     }
+    
     const recipient = await getUserId(userId);
     return json({recipient});
 }
@@ -40,6 +42,7 @@ export default function Team(){
             <br/>
             <p className="text-blue-600 font-semibold mb-2">Previews</p>
             <div className="flex flex-col items-center md:flex-row gap-x-24 gap-y-2 md:gap-y-8">
+                <Team_previews/>
                 <div className="flex-1"/>
                 <button
                 className="rounded-xl bg-yellow-300 font-semibold text-blud-600 w-80 h-12 transition duration-300 ease-in-out hover:bg-yellow-400 hover:-translate-y-2">

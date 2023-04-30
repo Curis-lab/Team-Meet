@@ -2,6 +2,8 @@ import { createCookieSessionStorage, json, redirect } from "@remix-run/node"
 import { db } from "./prisma.server"
 import type { Registerform, loginForm } from "./types.server"
 import { createUser } from "./users.server"
+import { useRevalidator } from "@remix-run/react";
+import { isRedirectResponse } from "@remix-run/react/dist/data";
 
 const secret = process.env.SESSION_SECRET;
 
@@ -73,3 +75,39 @@ redirectTo: string
         },
     });
 };
+
+function getUserSession(request: Request){
+    return storage.getSession(request.headers.get("Cookie"));
+};
+
+async function getUserId(request: Request) {
+    const session = await getUserSession(request);
+    const userid = session.get("userId");
+    if(!userid || typeof userid !== "string") return null;
+    return userid;
+}
+
+export async function getUser(request: Request){
+    const userId = await getUserId(request);
+    if( typeof userId !== "string"){
+        return null;
+    }
+    try{
+        const user = await db.user.findUnique({
+            where: {id: userId},
+            select:{id: true, email: true, profile: true}
+        });
+        return user;
+    }catch{
+        throw logout(request);
+    }
+}
+
+export async function logout(request: Request){
+    const session = await getUserSession(request);
+    return redirect("/login",{
+        headers:{
+            "Set-Cookie": await storage.destroySession(session)
+        }
+    })
+}
