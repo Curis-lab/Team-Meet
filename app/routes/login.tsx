@@ -5,6 +5,7 @@ import { ActionFunction, LoaderFunction, json, redirect } from "@remix-run/node"
 import { getUser, login, register } from "~/utils/auth.server";
 import { useActionData } from "@remix-run/react";
 
+//to avoid to show login again
 export const loader: LoaderFunction = async({request}) =>{
     return await getUser(request)? redirect('/') : null
 }

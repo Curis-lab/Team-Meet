@@ -22,5 +22,23 @@ export function Selectbox({
     value,
     label,    
 }:props){
-    return <div>hello</div>
+    return(
+    <div>
+        <label htmlFor={id} className="text-blue-600 font-semibold">{label}</label>
+        <div className={`flex items-center ${containerClassName} my-2`}>
+            <select 
+            className={`${className} appearance-none`}
+            id={id}
+            name={name}
+            value={value || ''}>
+                {
+                    options.map(option=>(
+                        <option key={option.name} value={option.value}>
+                            {option.name}
+                        </option>
+                    ))
+                }
+            </select>
+        </div>
+    </div>)
 }

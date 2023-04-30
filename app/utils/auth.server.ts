@@ -63,6 +63,18 @@ export const login = async (form: loginForm)=>{
 
 //Add Session
 
+export async function requireUserId(
+    request: Request,
+    redirectTo: string = new URL(request.url).pathname
+){
+    const session = await getUserSession(request);
+    const userId = session.get("userId");
+    if(!userId || typeof userId !== "string"){
+        throw redirect('/login');
+    }
+    return userId;
+}
+
 export const createUserSession = async(
 userId: string,
 redirectTo: string
