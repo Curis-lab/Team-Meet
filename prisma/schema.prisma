@@ -25,7 +25,8 @@ model Team{
   id        String      @id @default(auto()) @map("_id") @db.ObjectId
   createAt  DateTime    @default(now())
   style     TeamStyle?
-  authoer User @relation(references: [id], fields: [authorId],"AuthoredTeams")
+  message   String?
+  author User @relation(references: [id], fields: [authorId],"AuthoredTeams")
   authorId String @db.ObjectId
   recipient User @relation(references: [id], fields: [recipientId], "RecievedTeams")
   recipientId String @db.ObjectId
