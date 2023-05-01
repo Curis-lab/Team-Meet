@@ -1,14 +1,51 @@
 import { TeamStyle } from "@prisma/client";
-import { LoaderFunction, json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import React, { useState } from "react";
+import { ActionFunction, LoaderFunction, json, redirect } from "@remix-run/node";
+import { useActionData, useLoaderData } from "@remix-run/react";
+import React, { useState, useTransition } from "react";
 import Modal from "~/components/modal";
 import { Selectbox } from "~/components/select-box";
 import Team_previews from "~/components/team";
 import { UserCircle } from "~/components/user-circle";
-import { getUser } from "~/utils/auth.server";
+import { getUser, requireUserId } from "~/utils/auth.server";
 import { backgroundColorMap, colorMap, emojiMap } from "~/utils/constants";
+import { createTeam } from "~/utils/teams.server";
 import { getUserId } from "~/utils/users.server";
+
+
+export const action:ActionFunction = async({request})=>{
+    const form = await request.formData();
+    const userId = await requireUserId(request);
+
+    const message = form.get('message');
+    const backgroundColor = form.get('backgroundColor');
+    const textColor = form.get('textColor');
+    const emoji = form.get('emoji');
+    const recipientId = form.get('recipientId');
+
+    if(
+        typeof message !== 'string'
+        || typeof recipientId !== 'string'
+        || typeof backgroundColor !== 'string'
+        || typeof textColor !== 'string'
+        || typeof emoji !== 'string'
+    ){
+        return json({error: `Invalid Form Data`}, {status: 400})
+    }
+    if(!message.length){
+        return json({error:`Please provide a message`},{status: 400});
+    }
+    if(!recipientId.length){
+        return json({error:`No recipient found ....`},{status:400});
+    } 
+    
+    await createTeam(message, userId, recipientId,{
+        backgroundColor,
+        textColor,
+        emoji
+    } as TeamStyle);
+
+    return redirect('/home');
+}
 
 export const loader: LoaderFunction =async ({params, request}) => {
     const {userId} = params
@@ -21,6 +58,8 @@ export const loader: LoaderFunction =async ({params, request}) => {
 }
 
 export default function Team(){
+    const actionData = useActionData();
+    const [formError, setFormError] = useState('ooiwieow');
     const [formData, setFormData] = useState({
         message:'',
         style:{
@@ -57,7 +96,8 @@ export default function Team(){
     const backgroundColor = getOptions(backgroundColorMap);
 
     return<Modal isOpen={true} className="w-2/3 p-10">
-        <form>
+        <form method="post">
+            <div className="text-red-500 text-xs flex justify-center items-center p-2">{formError}</div>
             <input type="hidden" value={recipient.id} name="recipientId"/>
             <div className="flex flex-col md:flex-row gap-y-2 md:gap-y-0">
                 <div className="text-center flex flex-col items-center gap-y-2 pr-8">
@@ -69,7 +109,7 @@ export default function Team(){
                 </div>
                 <div className="flex-1 flex flex-col gay-y-4">
                     <textarea
-                    name="massage"
+                    name="message"
                     className="w-full rounded-xl h-40 p-4"
                     placeholder={`Say something nice about`}
                     value={formData.message}
@@ -97,7 +137,7 @@ export default function Team(){
                         <Selectbox
                         options={emojis}
                         name="emoji"
-                        value={formData.style.textColor}
+                        value={formData.style.emoji}
                         label="Emoji"
                         containerClassName="w-36"
                         className="w-full rounded-xl px-3 py-2 text-gray-400"
@@ -112,6 +152,7 @@ export default function Team(){
                 <Team_previews profile={user.profile} team={formData}/>
                 <div className="flex-1"/>
                 <button
+                type="submit"
                 className="rounded-xl bg-yellow-300 font-semibold text-blud-600 w-80 h-12 transition duration-300 ease-in-out hover:bg-yellow-400 hover:-translate-y-2">
                     SEND
                 </button>

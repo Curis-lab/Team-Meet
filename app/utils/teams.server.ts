@@ -1,4 +1,3 @@
-import { useRevalidator } from "@remix-run/react"
 import { db } from "./prisma.server"
 import { Prisma, TeamStyle } from "@prisma/client"
 
