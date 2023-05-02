@@ -18,3 +18,18 @@ export const emojiMap={
     PARTY:'🍑',
     HANDSUP:'🙌'
 }
+
+export const sortOptions = [
+    {
+        name:"Date",
+        value:"date",
+    },
+    {
+        name:"Sender Name",
+        value:"sender",
+    },
+    {
+        name:"Emoji",
+        value:"emoji",
+    },
+]

@@ -48,3 +48,25 @@ export const getFilterdTeams = async(
         }
     })
 }
+
+export const getRecentTeams =  async()=>{
+    return await db.team.findMany({
+        take:3,
+        orderBy:{
+            createAt: 'desc',
+        },
+        select:{
+            style:{
+                select:{
+                    emoji: true
+                }
+            },
+            recipient:{
+                select:{
+                    id: true,
+                    profile: true,
+                }
+            }
+        }
+    })
+}
