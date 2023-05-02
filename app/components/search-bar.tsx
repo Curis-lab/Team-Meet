@@ -2,8 +2,13 @@ import { sortOptions } from "~/utils/constants";
 import { Selectbox } from "./select-box";
 import { UserCircle } from "./user-circle";
 import { useNavigate } from "@remix-run/react";
+import { Profile } from "@prisma/client";
 
-export function SearchBar(){
+interface props{
+    profile: Profile
+}
+
+export function SearchBar({profile}: props){
     const navigate = useNavigate();
     return(
         <form className="w-full px-6 flex items-center gap-x-4 border-b-4 border-b-blue-900 border-opacity-30 h-20">
@@ -22,7 +27,7 @@ export function SearchBar(){
             <div className="flex-1"></div>
             <UserCircle
             className="h-14 w-14 transition duration-300 ease-in-out hover:scale-110 hover:border-2 hover:border-yellow-300"
-            profile={}
+            profile={profile}
             onClick={()=> navigate('profile')}
             />
         </form>
