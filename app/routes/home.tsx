@@ -22,7 +22,7 @@ export const loader: LoaderFunction = async({request})=>{
     const userId = await requireUserId(request);
 
     const user = await getUser(request);
-    const teams = await getFilterdTeams('644186929d5fe25f854d9a38', {}, {});
+    const teams = await getFilterdTeams(userId, {}, {});
     const recentTeams = await getRecentTeams();
     return json({users, teams, recentTeams, user});
 }

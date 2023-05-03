@@ -1,7 +1,8 @@
 import { User } from "@prisma/client"
 import { UserCircle } from "./user-circle"
-import { useNavigate } from "@remix-run/react"
-import { logout } from "~/utils/auth.server";
+import { useLoaderData, useNavigate } from "@remix-run/react"
+import { LoaderFunction, json } from "@remix-run/node"
+import { logout } from "~/utils/auth.server"
 
 interface props{
     users: User[]
@@ -9,7 +10,7 @@ interface props{
 
 export function UserPanel({users}: props){
     const navigate = useNavigate();
-
+    const {log} = useLoaderData();
     return(
         <div className="w-1/6 bg-gray-200 flex flex-col">
             <div className="text-center bg-gray-300 h-20 flex items-center justify-center">
@@ -26,10 +27,12 @@ export function UserPanel({users}: props){
             </div>
             <div
                 className="text-center p-6 bg-gray-300">
+                <form method="post" action="/logout">
                 <button
                 type="submit"
                 className="rounded-xl bg-yellow-300 font-semibold text-blue-600 px-3 py-2 transition duration-300 ease-in-out hover:bg-yellow-200 hover:translate-y-1"
                 >Sign Out</button>
+                </form>
             </div>
         </div>
     )
