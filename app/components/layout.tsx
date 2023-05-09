@@ -8,6 +8,5 @@ export function Layout({children}: {children: React.ReactNode}) {
       font-mono">
         {children}
       </div>
-
-  }
+}
   

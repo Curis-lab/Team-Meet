@@ -35,8 +35,8 @@ export const action: ActionFunction = async({request})=>{
         typeof lastName !== 'string'
         )){
         return json({error:`Invalid form sdfaewefsdf Data`, form: action},{status:400});
-        
     }
+    
     switch(action){
         
         case 'login':

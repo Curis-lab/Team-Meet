@@ -1,3 +1,4 @@
+import { Profile } from '@prisma/client';
 import {db} from './prisma.server';
 import { Registerform } from './types.server';
 import bcrypt from 'bcryptjs';
@@ -35,4 +36,17 @@ export const getUserId = async(userId: string)=>{
     return await db.user.findUnique({
         where:{id: userId},
     });
+}
+
+export const updateUser = async(userId: string, profile: Partial<Profile>)=>{
+    await db.user.update({
+        where:{
+            id: userId
+        },
+        data:{
+            profile:{
+                update: profile,
+            }
+        }
+    })
 }
