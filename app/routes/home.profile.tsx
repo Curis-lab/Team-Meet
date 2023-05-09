@@ -16,7 +16,6 @@ export const loader: LoaderFunction=async({request})=>{
     return json({user});
 }
 
-
 //action from form data
 export const action: ActionFunction = async({request})=>{
     const userId = await getUser(request);
@@ -49,11 +48,6 @@ export const action: ActionFunction = async({request})=>{
             if(Object.values(errors).some(Boolean)){
                 return json({errors})
             }
-            await updateUser(userId,{
-                firstName,
-                lastName,
-                department: department as Department  
-            });
         }
         default:
             return json({field:'default'});
